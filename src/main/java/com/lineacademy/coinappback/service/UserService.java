@@ -35,8 +35,6 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
     public User login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("INVALID_CREDENTIALS"));
@@ -52,14 +50,23 @@ public class UserService {
         return user;
     }
 
+    @Transactional(readOnly = true)
+    public User getMe(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        if (user.getDeletedAt() != null) {
+            throw new RuntimeException("USER_NOT_FOUND");
+        }
+
+        return user;
+    }
+
     @Transactional
     public User updateUser(Long currentUserId, UpdateUserRequest request) {
         User user = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
 
-    if (user.getDeletedAt() != null) {
-        throw new RuntimeException("USER_NOT_FOUND")
-    }
         if (user.getDeletedAt() != null) {
             throw new RuntimeException("USER_NOT_FOUND");
         }

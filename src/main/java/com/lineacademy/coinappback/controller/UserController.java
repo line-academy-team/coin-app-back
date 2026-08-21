@@ -75,25 +75,40 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @PatchMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateUser(
-            @AuthenticationPrincipal Long currentUserId,
-            @Valid @RequestBody UpdateUserRequest request
-    ) {
-    @PreAuthorize("isAuthenticated")
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getMe(
             @AuthenticationPrincipal Long userId
     ) {
         try {
-            User updatedUser = userService.updateUser(currentUserId, request);
             User user = userService.getMe(userId);
 
             return ResponseEntity.ok(Map.of(
-                    "message", "회원정보가 성공적으로 수정되었습니다.",
-                    "data", UserResponse.from(updatedUser)
                     "message", "사용자 정보를 성공적으로 불러왔습니다.",
                     "data", UserResponse.from(user)
+            ));
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("USER_NOT_FOUND"))
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                        "message", "해당 사용자를 찾을 수 없습니다."
+                ));
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "message", "서버 에러가 발생되었습니다."
+            ));
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/update")
+    public ResponseEntity<Map<String, Object>> updateUser(
+            @AuthenticationPrincipal Long currentUserId,
+            @Valid @RequestBody UpdateUserRequest request
+    ) {
+        try {
+            User updatedUser = userService.updateUser(currentUserId, request);
+            return ResponseEntity.ok(Map.of(
+                    "message", "회원정보가 성공적으로 수정되었습니다.",
+                    "data", UserResponse.from(updatedUser)
             ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("USER_NOT_FOUND"))
