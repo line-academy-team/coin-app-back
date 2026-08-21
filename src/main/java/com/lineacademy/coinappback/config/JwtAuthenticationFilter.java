@@ -1,5 +1,6 @@
 package com.lineacademy.coinappback.config;
 
+import com.lineacademy.coinappback.domain.entity.User;
 import com.lineacademy.coinappback.repository.UserRepository;
 import com.lineacademy.coinappback.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
