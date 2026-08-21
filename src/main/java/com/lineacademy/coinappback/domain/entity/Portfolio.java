@@ -2,6 +2,8 @@ package com.lineacademy.coinappback.domain.entity;
 
 import com.lineacademy.coinappback.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,5 +45,15 @@ public class Portfolio extends BaseTimeEntity {
 
     public void updateTitle(String title) {
         this.title = title;
+    }
+
+    public void addPortfolioItem(PortfolioItem item) {
+        this.portfolioItems.add(item);
+        item.assignPortfolio(this);
+    }
+
+    public void updatePortfolioData(String title, BigDecimal totalSeedMoney) {
+        this.title = title;
+        this.totalSeedMoney = totalSeedMoney;
     }
 }
