@@ -55,4 +55,8 @@ public class PortfolioItem {
         this.buyPrice = buyPrice;
         this.quantity = quantity;
     }
+
+    public void assignPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
 }
