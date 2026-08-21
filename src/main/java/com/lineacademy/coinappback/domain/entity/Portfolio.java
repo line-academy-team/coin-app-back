@@ -44,4 +44,9 @@ public class Portfolio extends BaseTimeEntity {
     public void updateTitle(String title) {
         this.title = title;
     }
+
+    public void addPortfolioItem(PortfolioItem item) {
+        this.portfolioItems.add(item);
+        item.assignPortfolio(this);
+    }
 }

@@ -52,4 +52,8 @@ public class PortfolioItem {
     public void updateQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
+
+    public void assignPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
 }
