@@ -1,4 +1,4 @@
-package com.lineacademy.coinappspringprev.domain.entity;
+package com.lineacademy.coinappback.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
