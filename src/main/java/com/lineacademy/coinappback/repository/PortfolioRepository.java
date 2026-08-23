@@ -12,6 +12,9 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
     Optional<Portfolio> findByIdAndUserId(Long id, Long userId);
 
-    @Query("SELECT DISTINCT p FROM Portfolio p LEFT JOIN FETCH p.portfolioItems WHERE p.user.id = :userId")
+    @Query("SELECT DISTINCT p FROM Portfolio p LEFT JOIN FETCH p.portfolioItems WHERE p.id = :id AND p.user.id = :userId")
+    Optional<Portfolio> findByIdAndUserIdWithItems(@Param("id") Long id, @Param("userId") Long userId);
+
+    @Query("SELECT DISTINCT p FROM Portfolio p LEFT JOIN FETCH p.portfolioItems WHERE p.user.id = :userId ORDER BY p.createdAt DESC")
     List<Portfolio> findAllByUserIdWithItems(@Param("userId") Long userId);
 }

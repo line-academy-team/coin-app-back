@@ -1,7 +1,6 @@
 package com.lineacademy.coinappback.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -56,7 +55,4 @@ public class PortfolioItem {
         this.quantity = quantity;
     }
 
-    public void assignPortfolio(Portfolio portfolio) {
-        this.portfolio = portfolio;
-    }
 }

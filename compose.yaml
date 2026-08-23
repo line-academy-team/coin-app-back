@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mariadb:11.8
+    environment:
+      MARIADB_DATABASE: coinfolio
+      MARIADB_USER: coinfolio
+      MARIADB_PASSWORD: ${DB_PASSWORD:-coinfolio}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-coinfolio-root}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - coinfolio-mariadb-data:/var/lib/mysql
+
+  backend:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:mariadb://db:3306/coinfolio
+      DB_USERNAME: coinfolio
+      DB_PASSWORD: ${DB_PASSWORD:-coinfolio}
+      JWT_SECRET: ${JWT_SECRET:-coinfolio-docker-development-secret-key-2026}
+      CORS_ALLOWED_ORIGIN_PATTERNS: ${CORS_ALLOWED_ORIGIN_PATTERNS:-http://localhost:*,http://127.0.0.1:*}
+    ports:
+      - "8080:8080"
+
+volumes:
+  coinfolio-mariadb-data:
+
