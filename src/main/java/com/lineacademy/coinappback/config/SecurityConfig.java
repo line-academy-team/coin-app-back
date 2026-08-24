@@ -29,7 +29,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                         // 라우터 접근 유무
-                        "/uesrs/create",
+                        "/users/create",
                         "/users/login",
                         "/users/password-reset",
                         "/notice/**"
