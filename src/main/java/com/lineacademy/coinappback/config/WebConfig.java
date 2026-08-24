@@ -10,7 +10,8 @@ public class WebConfig implements WebMvcConfigurer {
     private final String[] allowedOriginPatterns;
 
     public WebConfig(
-            @Value("${app.cors.allowed-origin-patterns}") String allowedOriginPatterns
+            @Value("${app.cors.allowed-origin-patterns:http://localhost:*}")
+            String allowedOriginPatterns
     ) {
         this.allowedOriginPatterns = allowedOriginPatterns.split(",");
     }
