@@ -1,8 +1,8 @@
 package com.lineacademy.coinappback.controller;
 
 import com.lineacademy.coinappback.domain.entity.Portfolio;
-import com.lineacademy.coinappback.dto.portfolio.request.UpdatePortfolioRequest;
 import com.lineacademy.coinappback.dto.portfolio.request.CreatePortfolioRequest;
+import com.lineacademy.coinappback.dto.portfolio.request.UpdatePortfolioRequest;
 import com.lineacademy.coinappback.dto.portfolio.response.PortfolioResponse;
 import com.lineacademy.coinappback.service.PortfolioService;
 import jakarta.validation.Valid;
@@ -11,10 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +41,30 @@ public class PortfolioController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> getPortfolio(
+            @AuthenticationPrincipal Long userId,
+            @PathVariable Long id
+    ) {
+        try {
+            Portfolio portfolio = portfolioService.getPortfolio(userId, id);
+            return ResponseEntity.ok(Map.of(
+                    "message", "포트폴리오를 성공적으로 불러왔습니다.",
+                    "data", PortfolioResponse.from(portfolio)
+            ));
+        } catch (RuntimeException e) {
+            if ("PORTFOLIO_NOT_FOUND_OR_UNAUTHORIZED".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                        "message", "존재하지 않는 포트폴리오입니다."
+                ));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "message", "포트폴리오 조회 중 서버 에러가 발생했습니다."
+            ));
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updatePortfolio(
             @AuthenticationPrincipal Long userId,
@@ -59,9 +79,14 @@ public class PortfolioController {
                     "data", PortfolioResponse.from(portfolio)
             ));
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("PORTFOLIO_NOT_FOUND_OR_UNAUTHORIZED")) {
+            if ("PORTFOLIO_NOT_FOUND_OR_UNAUTHORIZED".equals(e.getMessage())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                         "message", "접근 권한이 없거나 존재하지 않는 포트폴리오입니다."
+                ));
+            }
+            if ("INVALID_PORTFOLIO_ITEMS".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                        "message", "코인 비중의 합계는 100%여야 하며 중복 코인은 선택할 수 없습니다."
                 ));
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
@@ -70,6 +95,8 @@ public class PortfolioController {
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deletePortfolio(
             @AuthenticationPrincipal Long userId,
             @PathVariable Long id
@@ -81,7 +108,7 @@ public class PortfolioController {
                     "message", "포트폴리오가 성공적으로 삭제되었습니다."
             ));
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("PORTFOLIO_NOT_FOUND_OR_UNAUTHORIZED")) {
+            if ("PORTFOLIO_NOT_FOUND_OR_UNAUTHORIZED".equals(e.getMessage())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
                         "message", "접근 권한이 없거나 존재하지 않는 포트폴리오입니다."
                 ));
@@ -107,9 +134,14 @@ public class PortfolioController {
                     "data", PortfolioResponse.from(portfolio)
             ));
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("USER_NOT_FOUND")) {
+            if ("USER_NOT_FOUND".equals(e.getMessage())) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
                         "message", "해당 사용자를 찾을 수 없습니다."
+                ));
+            }
+            if ("INVALID_PORTFOLIO_ITEMS".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                        "message", "코인 비중의 합계는 100%여야 하며 중복 코인은 선택할 수 없습니다."
                 ));
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(

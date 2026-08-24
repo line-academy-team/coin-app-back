@@ -31,7 +31,7 @@ public class JwtUtil {
 
     public Long getUserIdFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(key) // secretKey
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()

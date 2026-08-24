@@ -2,8 +2,6 @@ package com.lineacademy.coinappback.domain.entity;
 
 import com.lineacademy.coinappback.domain.common.BaseTimeEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +31,7 @@ public class Portfolio extends BaseTimeEntity {
     @Column(name = "total_seed_money", nullable = false, precision = 18, scale = 2)
     private BigDecimal totalSeedMoney;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PortfolioItem> portfolioItems = new ArrayList<>();
 
     @Builder
