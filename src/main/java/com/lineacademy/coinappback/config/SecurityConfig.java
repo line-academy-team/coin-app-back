@@ -33,6 +33,7 @@ public class SecurityConfig {
                         "/users/create",
                         "/users/login",
                         "/users/password-reset",
+                        "/coins/**",
                         "/notice/**"
                     ).permitAll()
                     .anyRequest().authenticated()
