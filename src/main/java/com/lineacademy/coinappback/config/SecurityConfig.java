@@ -34,18 +34,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults()) // 아래 만들어둔 corsConfigurationSource 빈을 자동으로 찾아 씁니다.
+        http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
-                                        // 라우터 접근 유무
-                                        "/users/create",
-                                        "/users/login",
-                                        "/users/password-reset",
-                                        "/notice/**"
-                                ).permitAll()
-                                .anyRequest().authenticated()
+                        // 라우터 접근 유무
+                        "/users/create",
+                        "/users/login",
+                        "/users/password-reset",
+                        "/coins/**",
+                        "/notice/**"
+                    ).permitAll()
+                    .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
